@@ -12,7 +12,7 @@ poetry install
 
 
 ```
-poetry run python app.py
+poetry run uvicorn app:app
 ```
 
 ## Configuration
