@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "melldechof-api"
+version = "0.1.0"
+description = "API for melldechof"
+authors = ["Michel Albert <michel@albert.lu>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.61.1"
+httpx = "^0.16.1"
+
+[tool.poetry.dev-dependencies]
+uvicorn = "^0.12.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
