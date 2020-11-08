@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.8"
 fastapi = "^0.61.1"
 httpx = "^0.16.1"
+pydantic = {extras = ["dotenv"], version = "^1.7.2"}
 
 [tool.poetry.dev-dependencies]
 uvicorn = "^0.12.1"

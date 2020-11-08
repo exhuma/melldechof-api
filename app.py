@@ -4,6 +4,7 @@ import httpx
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseSettings
 
 app = FastAPI()
 
@@ -22,6 +23,16 @@ app.add_middleware(
 )
 
 
+class Settings(BaseSettings):
+    ics_url: str = "https://www.officeholidays.com/ics-clean/luxembourg"
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -30,7 +41,7 @@ def read_root():
 @app.get("/ical")
 async def ical():
     async with httpx.AsyncClient() as client:
-        response = await client.get("https://www.officeholidays.com/ics-clean/luxembourg")
+        response = await client.get(settings.ics_url)
         return {"ics": response.text}
 
 
