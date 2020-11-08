@@ -30,7 +30,7 @@ def read_root():
 @app.get("/ical")
 async def ical():
     async with httpx.AsyncClient() as client:
-        response = await client.get("https://calendar.google.com/calendar/ical/cug6ctnnqdg31q6d82vba8gjkc%40group.calendar.google.com/public/basic.ics")
+        response = await client.get("https://www.officeholidays.com/ics-clean/luxembourg")
         return {"ics": response.text}
 
 
