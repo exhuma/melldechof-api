@@ -3,7 +3,7 @@ import invoke
 
 @invoke.task
 def run(context):
-    context.run("poetry run uvicorn melldechof.api:app", replace_env=False, pty=True)
+    context.run("poetry run uvicorn --reload melldechof.api:app", replace_env=False, pty=True)
 
 
 @invoke.task
