@@ -41,7 +41,7 @@ def client():
 
     app.dependency_overrides[get_db] = lambda: test_session
 
-    test_user = User(id=UUID('e9432395-603f-41ac-9fa3-0521d9cef9b8'), email="foo@bar.com")
+    test_user = User(id=UUID('e9432395-603f-41ac-9fa3-0521d9cef9b8'), email="foo@bar.com", name="John Doe")
     test_session.add(test_user)
     test_session.flush()
 
@@ -67,3 +67,22 @@ def test_update_presence(client):
     response = client.put(f"/presence/{user_id}/{event_id}/present")
     assert response.status_code == 200, response.text
     assert response.json() == {"userId": str(user_id), "eventId": str(event_id), "presence": "present"}
+
+
+@pytest.mark.dependency(depends=["test_store_new_presence"])
+def test_get_presences(client):
+    event_id = uuid4()
+    user_id = "e9432395-603f-41ac-9fa3-0521d9cef9b8"
+    client.put(f"/presence/{user_id}/{event_id}/present")
+    response = client.get(f"/presences")
+    assert response.status_code == 200, response.text
+    assert response.json() == {
+        "presences": [
+            {
+                "event_id": str(event_id),
+                "user_id": user_id,
+                "presence": "present",
+                "user_name": "John Doe",
+            }
+        ]
+    }

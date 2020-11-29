@@ -20,6 +20,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(UUID, primary_key=True, nullable=False, default=uuid4)
     email = Column(String(128), unique=True)
+    name = Column(String(128))
 
     presences = relationship("Presence", back_populates="user")
 

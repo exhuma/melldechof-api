@@ -6,7 +6,8 @@ from fastapi import Depends, FastAPI, status, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from melldechof.db import Base, SessionLocal, engine
-from melldechof.localtypes import Presence
+from melldechof.localtypes import Presence as PresenceEnum
+from melldechof.models import Presence, PresenceList
 from pydantic import BaseSettings
 from sqlalchemy.orm import Session
 import melldechof.db as db
@@ -52,10 +53,9 @@ async def ical():
         response = await client.get(settings.ics_url)
         return {"ics": response.text}
 
-
 @app.put("/presence/{user_id}/{event_id}/{presence}")
 async def store_presence(
-    user_id: UUID, event_id: str, presence: Presence, response: Response, session: Session = Depends(get_db),
+    user_id: UUID, event_id: str, presence: PresenceEnum, response: Response, session: Session = Depends(get_db),
 ):
     user = session.query(db.User).get(user_id)
     if not user:
@@ -82,3 +82,21 @@ async def store_presence(
         "presence": presence,
         "userId": user_id,
     }
+
+
+
+@app.get("/presences")
+async def get_presences(session: Session = Depends(get_db)) -> PresenceList:
+    presences = session.query(db.Presence).join(db.User)
+    output = PresenceList(
+        presences=[
+            Presence(
+                user_id=row.user_id,
+                event_id=row.event_id,
+                presence=row.presence,
+                user_name=row.user.name
+            )
+            for row in presences
+        ]
+    )
+    return output
