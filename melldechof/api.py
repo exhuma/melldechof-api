@@ -84,7 +84,6 @@ async def store_presence(
     }
 
 
-
 @app.get("/presences")
 async def get_presences(session: Session = Depends(get_db)) -> PresenceList:
     presences = session.query(db.Presence).join(db.User)
@@ -100,3 +99,15 @@ async def get_presences(session: Session = Depends(get_db)) -> PresenceList:
         ]
     )
     return output
+
+
+@app.get("/presences/{event_id}/{user_id}")
+async def get_presences(event_id: str, user_id: UUID, session: Session = Depends(get_db)) -> Presence:
+    presence = session.query(db.Presence).join(db.User).filter(
+        db.Presence.event_id == event_id,
+        db.Presence.user_id == user_id,
+    )
+    instance = presence.one_or_none()
+    if instance is None:
+        return Presence(user_id, event_id, PresenceEnum.UNKNOWN, "")
+    return Presence(user_id=user_id, event_id=event_id, presence=instance.presence, user_name=instance.user.name)
